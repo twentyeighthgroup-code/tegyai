@@ -134,10 +134,10 @@
         </h1>
         <p id="welcome-text" class="text-lg mb-8 opacity-90"></p>
 
-        <!-- Чат -->
+        
         <div id="chat-history" class="chat-history text-left mb-6"></div>
 
-        <!-- Поле ввода -->
+        
         <div class="input-area">
             <input type="text" id="question-input" placeholder="Задай мне вопрос..." 
                    onkeydown="if(event.keyCode===13) sendMessage()">
@@ -150,16 +150,16 @@
         </div>
 
         <div class="text-xs text-gray-500 mt-8 flex items-center justify-center gap-2">
-            <span>Работает полностью в браузере • GitHub Pages</span>
+            <span>AI may be wrong</span>
             <span class="text-2xl">•</span>
-            <span>Made with ❤️ by Tegy AI</span>
+            <span>Start Smart</span>
         </div>
     </div>
 
-    <div class="footer">Сделано <span style="color:#ff6666">Teg</span><span style="color:#ff9999">company</span></div>
+    <div class="footer">Made by <span style="color:#ff6666">Teg</span><span style="color:#ff9999">company</span></div>
 
     <script>
-        // ====================== ДАННЫЕ ======================
+        
         const jokes = {
             ru: {
                 programming: [
@@ -204,7 +204,7 @@
             }
         }
 
-        // ====================== БАЗА ЗНАНИЙ (полностью из твоего кода) ======================
+        
         let knowledge = {
             technology: {
                 "Как ИИ влияет на работу?": { answer: "ИИ автоматизирует рутинные задачи, вроде анализа данных или поддержки клиентов. Но многие профессии, например, творческие, всё ещё требуют человеческого подхода. Может, расскажешь, чем ты занимаешься?", lang: "ru" },
@@ -233,7 +233,7 @@
             }
         }
 
-        // Превращаем базу в плоский массив для TF-IDF
+        
         let allQuestions = []
         let questionToData = {}
 
@@ -255,17 +255,17 @@
             })
         }
 
-        // ====================== ПРОСТОЙ TF-IDF НА JS ======================
+        
         let tfidfVectorizer = {
             vocab: {},
             idf: {},
             fitTransform(docs) {
-                // Считаем TF-IDF
+                
                 const wordSet = new Set()
                 docs.forEach(doc => doc.split(' ').forEach(w => wordSet.add(w)))
                 this.vocab = Array.from(wordSet)
 
-                // IDF
+                
                 const N = docs.length
                 this.idf = {}
                 this.vocab.forEach(word => {
@@ -273,7 +273,7 @@
                     this.idf[word] = Math.log((N + 1) / (df + 1)) + 1
                 })
 
-                // Возвращаем векторы
+                
                 return docs.map(doc => {
                     const vec = new Array(this.vocab.length).fill(0)
                     const words = doc.split(' ')
@@ -288,7 +288,7 @@
 
         let tfidfMatrix = []
 
-        // ====================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ======================
+        
         const ruStop = new Set(["и","в","на","с","по","для","от","из","о","а","но","не","это","что","как","так","то","же","бы","был","была","было","были","у","к","за","под","над","между","или","ли","либо","да","нет","даже","уже","ещё","ещё","только","очень","все","всех","всем","всеми","всё","всё","всё","всё"])
         const enStop = new Set(["the","a","an","and","or","but","if","while","for","of","to","in","on","at","by","with","about","against","between","into","through","during","before","after","above","below","up","down","from","than","then","when","where","why","how","all","any","both","each","few","more","most","other","some","such","no","nor","not","only","own","same","so","than","too","very","s","t","can","will","just","don","should","now"])
 
@@ -320,29 +320,29 @@
 
         function calculateExpression(expr) {
             try {
-                // Простой безопасный калькулятор + время
+                
                 const result = Function('"use strict";return (' + expr.replace(/[^0-9+\-*/(). ]/g, '') + ')')()
                 const now = new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow', hour12: false })
                 return `${expr} = ${result}\nТекущее время (МСК): ${now}`
             } catch(e) { return null }
         }
 
-        // ====================== ОСНОВНАЯ ЛОГИКА AI ======================
+        
         function simpleAI(question) {
             const lang = window.currentLang || 'ru'
 
-            // Математика
+            
             const calc = calculateExpression(question)
             if (calc) return calc
 
-            // Приветствия
+            
             if (/привет|здравствуй|hi|hello/i.test(question)) {
                 return dialogue.greetings[lang][Math.floor(Math.random()*dialogue.greetings[lang].length)]
             }
 
             const processed = preprocessText(question, lang)
 
-            // TF-IDF поиск
+            
             if (allQuestions.length === 0) buildKnowledgeIndex()
             if (tfidfMatrix.length === 0) {
                 tfidfMatrix = tfidfVectorizer.fitTransform(allQuestions)
@@ -365,12 +365,12 @@
                 return bestAnswer
             }
 
-            // Шутка если ничего не нашли
+            
             if (/шутк|joke/i.test(question)) {
                 return tellJoke(true)
             }
 
-            // Стандартный ответ
+            
             const fallback = lang === 'ru'
                 ? "Хм, интересный вопрос! Уточни, пожалуйста, я обязательно помогу 🔥"
                 : "Hmm, interesting question! Could you clarify a bit? I'll definitely help 🔥"
@@ -378,7 +378,7 @@
             return dialogue.encouragements[lang][Math.floor(Math.random()*dialogue.encouragements[lang].length)] + "\n" + fallback
         }
 
-        // ====================== UI ======================
+        
         window.currentLang = 'ru'
 
         function switchLanguage(lang) {
@@ -445,12 +445,12 @@
             }
         }
 
-        // ====================== ЗАПУСК ======================
+        
         window.onload = () => {
             buildKnowledgeIndex()
             tfidfMatrix = tfidfVectorizer.fitTransform(allQuestions)
 
-            // Приветственное сообщение
+            
             const history = JSON.parse(localStorage.getItem('tegyChat') || '[]')
             if (history.length === 0) {
                 const lang = window.currentLang
@@ -462,7 +462,7 @@
             document.getElementById('welcome-text').innerHTML = 
                 'Привет! Я <strong>Tegy AI</strong>. Задавай любые вопросы — я всегда на связи! 🚀'
 
-            console.log('%c✅ Tegy AI полностью загружен и работает на GitHub Pages!', 'color:#ff6666; font-size:18px; font-weight:bold')
+            console.log('%c✅ Tegy AI done!', 'color:#ff6666; font-size:18px; font-weight:bold')
         }
     </script>
 </body>
